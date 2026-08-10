@@ -1,4 +1,4 @@
-<!-- Sidebar Navigation Component -->
+<!-- Sidebar Navigation Component - SIP SK Pekalongan Utara -->
 <aside class="w-64 bg-slate-900 text-slate-300 min-h-screen flex flex-col transition-all duration-200">
     <!-- Branding Header -->
     <div class="h-16 flex items-center px-6 bg-slate-950 font-bold text-white tracking-wide border-b border-slate-800">
