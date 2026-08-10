@@ -3,8 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    // Dashboard Controller Stub (Ringkasan statistik per status permohonan)
+    /**
+     * Display dashboard overview.
+     */
+    public function index(): View
+    {
+        return view('dashboard.index');
+    }
 }
