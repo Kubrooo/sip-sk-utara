@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Pengesahan & TTE Camat'); ?>
 
-@section('title', 'Pengesahan & TTE Camat')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="space-y-6">
     <!-- Header Page -->
     <div class="flex items-center justify-between bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl">
@@ -13,16 +11,18 @@
         </div>
     </div>
 
-    @if(session('success'))
+    <?php if(session('success')): ?>
         <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm">
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
         </div>
-    @endif
-    @if(session('error'))
+    <?php endif; ?>
+    <?php if(session('error')): ?>
         <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
-            {{ session('error') }}
+            <?php echo e(session('error')); ?>
+
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Table Card -->
     <div class="bg-slate-800/80 border border-slate-700/60 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl">
@@ -38,43 +38,49 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-700/60">
-                    @forelse($submissions as $submission)
+                    <?php $__empty_1 = true; $__currentLoopData = $submissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $submission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr class="hover:bg-slate-700/30 transition-colors">
                             <td class="px-6 py-4 font-mono text-xs font-bold text-emerald-400">
-                                {{ $submission->sk_number }}
+                                <?php echo e($submission->sk_number); ?>
+
                             </td>
                             <td class="px-6 py-4 font-mono text-xs text-indigo-400">
-                                {{ $submission->tracking_code }}
+                                <?php echo e($submission->tracking_code); ?>
+
                             </td>
                             <td class="px-6 py-4 font-medium text-white">
-                                {{ $submission->kelurahan->kelurahan_name ?? $submission->kelurahan->name }}
+                                <?php echo e($submission->kelurahan->kelurahan_name ?? $submission->kelurahan->name); ?>
+
                             </td>
                             <td class="px-6 py-4 text-slate-300">
-                                {{ $submission->template->title ?? '-' }}
+                                <?php echo e($submission->template->title ?? '-'); ?>
+
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ route('submissions.show', $submission) }}" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium transition-colors">
+                                <a href="<?php echo e(route('submissions.show', $submission)); ?>" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium transition-colors">
                                     Lihat Pratinjau
                                 </a>
 
-                                <form action="{{ route('verification.approve', $submission) }}" method="POST" class="inline-block" onsubmit="return confirm('Sahkan SK ini dan bubuhkan Tanda Tangan Elektronik (TTE) Camat?')">
-                                    @csrf
+                                <form action="<?php echo e(route('verification.approve', $submission)); ?>" method="POST" class="inline-block" onsubmit="return confirm('Sahkan SK ini dan bubuhkan Tanda Tangan Elektronik (TTE) Camat?')">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="inline-flex items-center px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-600/30">
                                         ✍️ Sahkan & Bubuhkan TTE
                                     </button>
                                 </form>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center text-slate-500">
                                 Tidak ada permohonan SK yang menunggu pengesahan Camat saat ini.
                             </td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\sip-sk-utara\resources\views/verification/camat-index.blade.php ENDPATH**/ ?>

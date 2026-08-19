@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Tambah Template SK Baru'); ?>
 
-@section('title', 'Tambah Template SK Baru')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="max-w-4xl mx-auto space-y-6" x-data="{
     fields: [
         { name: 'nama_ketua', label: 'Nama Ketua / Penanggung Jawab', type: 'text', options: '', required: true },
@@ -24,23 +22,23 @@
             <h1 class="text-2xl font-bold text-white tracking-tight">Tambah Template SK Baru</h1>
             <p class="text-sm text-slate-400 mt-1">Buat format dokumen dan bidang variabel input dinamis</p>
         </div>
-        <a href="{{ route('templates.index') }}" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium transition-colors">
+        <a href="<?php echo e(route('templates.index')); ?>" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium transition-colors">
             &larr; Kembali
         </a>
     </div>
 
-    @if (isset($errors) && $errors->any())
+    <?php if(isset($errors) && $errors->any()): ?>
         <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
             <ul class="list-disc list-inside space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <li><?php echo e($error); ?></li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
         </div>
-    @endif
+    <?php endif; ?>
 
-    <form method="POST" action="{{ route('templates.store') }}" class="space-y-6">
-        @csrf
+    <form method="POST" action="<?php echo e(route('templates.store')); ?>" class="space-y-6">
+        <?php echo csrf_field(); ?>
 
         <!-- Metadata Template Card -->
         <div class="bg-slate-800/80 border border-slate-700/60 backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-5">
@@ -49,13 +47,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                     <label for="code" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Kode Template (Unik)</label>
-                    <input type="text" name="code" id="code" required value="{{ old('code') }}" placeholder="SK-LPMK-001"
+                    <input type="text" name="code" id="code" required value="<?php echo e(old('code')); ?>" placeholder="SK-LPMK-001"
                         class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-mono">
                 </div>
 
                 <div>
                     <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Judul Dokumen Surat Keputusan</label>
-                    <input type="text" name="title" id="title" required value="{{ old('title') }}" placeholder="Pengesahan Pengurus LPMK Kelurahan..."
+                    <input type="text" name="title" id="title" required value="<?php echo e(old('title')); ?>" placeholder="Pengesahan Pengurus LPMK Kelurahan..."
                         class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                 </div>
             </div>
@@ -123,16 +121,16 @@
         <!-- HTML Template Body Card -->
         <div class="bg-slate-800/80 border border-slate-700/60 backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
             <h2 class="text-lg font-semibold text-white">Struktur Dokumen (HTML Template Body)</h2>
-            <p class="text-xs text-slate-400">Gunakan format tag HTML standar dan ganti nilai dinamis dengan kode placeholder seperti <code class="text-indigo-400 font-mono">@{{nama_ketua}}</code>.</p>
+            <p class="text-xs text-slate-400">Gunakan format tag HTML standar dan ganti nilai dinamis dengan kode placeholder seperti <code class="text-indigo-400 font-mono">{{nama_ketua}}</code>.</p>
 
             <textarea name="html_template" id="html_template" rows="12" required
                 class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 leading-relaxed"
-                placeholder="<p>Membaca: ...</p><p>Menimbang: ...</p><p>MEMUTUSKAN:</p><p>Menetapkan: MENGESAHKAN Sdr. @{{nama_ketua}} sebagai Ketua ...</p>">{{ old('html_template') }}</textarea>
+                placeholder="<p>Membaca: ...</p><p>Menimbang: ...</p><p>MEMUTUSKAN:</p><p>Menetapkan: MENGESAHKAN Sdr. {{nama_ketua}} sebagai Ketua ...</p>"><?php echo e(old('html_template')); ?></textarea>
         </div>
 
         <!-- Submit Button -->
         <div class="flex justify-end gap-3">
-            <a href="{{ route('templates.index') }}" class="px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-semibold text-sm transition-colors">
+            <a href="<?php echo e(route('templates.index')); ?>" class="px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-semibold text-sm transition-colors">
                 Batal
             </a>
             <button type="submit" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/30">
@@ -142,4 +140,6 @@
 
     </form>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\sip-sk-utara\resources\views/templates/create.blade.php ENDPATH**/ ?>
