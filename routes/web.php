@@ -22,7 +22,7 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated & Role-Protected Routes
+| Authenticated Routes
 |--------------------------------------------------------------------------
 */
 
@@ -31,20 +31,24 @@ Route::middleware(['auth'])->group(function () {
     // 1. Dashboard Utama (Semua Peran)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // 2. Dynamic Template Engine Management (Admin Kecamatan & Bagian Hukum)
-    Route::middleware(['role:admin_kecamatan,bagian_hukum'])->group(function () {
-        Route::resource('templates', SkTemplateController::class);
-    });
+    // 2. Daftar Permohonan SK & Detail (Dapat diakses oleh Semua Peran)
+    Route::get('/submissions', [SkSubmissionController::class, 'index'])->name('submissions.index');
+    Route::get('/submissions/{submission}', [SkSubmissionController::class, 'show'])->name('submissions.show');
+    Route::get('/submissions/{submission}/pdf', [SkSubmissionController::class, 'downloadPdf'])->name('submissions.pdf');
 
-    // 3. Submissions Drafting & Inisiasi (Admin Kelurahan)
+    // 3. Submissions Drafting & Inisiasi (Khusus Admin Kelurahan)
     Route::middleware(['role:admin_kelurahan'])->group(function () {
-        Route::resource('submissions', SkSubmissionController::class)->except(['destroy']);
+        Route::get('/submissions/create', [SkSubmissionController::class, 'create'])->name('submissions.create');
+        Route::post('/submissions', [SkSubmissionController::class, 'store'])->name('submissions.store');
+        Route::get('/submissions/{submission}/edit', [SkSubmissionController::class, 'edit'])->name('submissions.edit');
+        Route::put('/submissions/{submission}', [SkSubmissionController::class, 'update'])->name('submissions.update');
         Route::post('/submissions/{submission}/submit', [SkSubmissionController::class, 'submitToKecamatan'])->name('submissions.submit');
     });
 
-    // 4. Shared View Details & PDF Download
-    Route::get('/submissions/{submission}', [SkSubmissionController::class, 'show'])->name('submissions.show');
-    Route::get('/submissions/{submission}/pdf', [SkSubmissionController::class, 'downloadPdf'])->name('submissions.pdf');
+    // 4. Dynamic Template Engine Management (Admin Kecamatan & Bagian Hukum)
+    Route::middleware(['role:admin_kecamatan|bagian_hukum'])->group(function () {
+        Route::resource('templates', SkTemplateController::class);
+    });
 
     // 5. Verification & Approval Workflow
     Route::prefix('verification')->name('verification.')->group(function () {
@@ -68,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Kembalikan Revisi / Tolak (Kecamatan & Hukum)
-        Route::middleware(['role:admin_kecamatan,bagian_hukum'])->group(function () {
+        Route::middleware(['role:admin_kecamatan|bagian_hukum'])->group(function () {
             Route::post('/{submission}/revision', [SkVerificationController::class, 'returnRevision'])->name('revision');
         });
     });

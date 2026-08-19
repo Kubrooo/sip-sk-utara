@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Surat Keputusan - {{ $submission->sk_number ?? $submission->tracking_code }}</title>
+    <title>Surat Keputusan - <?php echo e($submission->sk_number ?? $submission->tracking_code); ?></title>
     <style>
         @page {
             margin: 2cm 2.5cm 2cm 2.5cm;
@@ -101,16 +101,18 @@
     <!-- Judul & Nomor SK -->
     <div class="title-box">
         <h4>KPUTUSAN CAMAT PEKALONGAN UTARA</h4>
-        <p>NOMOR: {{ $submission->sk_number ?? '...../...../PKL-UTARA/' . date('Y') }}</p>
+        <p>NOMOR: <?php echo e($submission->sk_number ?? '...../...../PKL-UTARA/' . date('Y')); ?></p>
         <p style="margin-top: 10px; font-weight: bold; text-transform: uppercase;">
             TENTANG<br>
-            {{ $submission->template->title }}
+            <?php echo e($submission->template->title); ?>
+
         </p>
     </div>
 
     <!-- Isi Dokumen (Dinamic Parsed Blade HTML) -->
     <div class="content">
-        {!! $contentHtml !!}
+        <?php echo $contentHtml; ?>
+
     </div>
 
     <!-- Kolom Tanda Tangan Elektronik (TTE) -->
@@ -120,31 +122,32 @@
                 <td style="width: 50%;"></td>
                 <td style="width: 50%; text-align: center;">
                     <p style="margin-bottom: 5px;">Ditetapkan di Pekalongan</p>
-                    <p style="margin-bottom: 10px;">Pada tanggal: {{ $submission->approved_at ? $submission->approved_at->translatedFormat('d F Y') : date('d F Y') }}</p>
+                    <p style="margin-bottom: 10px;">Pada tanggal: <?php echo e($submission->approved_at ? $submission->approved_at->translatedFormat('d F Y') : date('d F Y')); ?></p>
                     <p style="font-weight: bold; text-transform: uppercase; margin-bottom: 10px;">
                         CAMAT PEKALONGAN UTARA
                     </p>
 
-                    @if($submission->status === App\Enums\SubmissionStatus::APPROVED)
+                    <?php if($submission->status === App\Enums\SubmissionStatus::APPROVED): ?>
                         <div class="tte-box">
                             <div style="margin-bottom: 5px;">
-                                <img src="{{ $qrCodeBase64 }}" alt="QR Code TTE" style="width: 100px; height: 100px;">
+                                <img src="<?php echo e($qrCodeBase64); ?>" alt="QR Code TTE" style="width: 100px; height: 100px;">
                             </div>
                             <div class="tte-badge">✓ DITANDATANGANI SECARA ELEKTRONIK</div>
                             <div style="margin-top: 3px; font-weight: bold;">
-                                {{ $submission->approver->name ?? 'Camat Pekalongan Utara' }}
+                                <?php echo e($submission->approver->name ?? 'Camat Pekalongan Utara'); ?>
+
                             </div>
-                            <div style="font-size: 8pt; color: #64748b;">NIP: {{ $submission->approver->nip ?? '-' }}</div>
+                            <div style="font-size: 8pt; color: #64748b;">NIP: <?php echo e($submission->approver->nip ?? '-'); ?></div>
                             <div style="margin-top: 5px;" class="hash-code">
                                 SHA-256 Hash:<br>
-                                {{ substr($submission->tte_hash, 0, 32) }}...
+                                <?php echo e(substr($submission->tte_hash, 0, 32)); ?>...
                             </div>
                         </div>
-                    @else
+                    <?php else: ?>
                         <div style="height: 90px; border: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 9pt; padding: 20px;">
                             (Draf Belum Disahkan / TTE Pending)
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </td>
             </tr>
         </table>
@@ -152,3 +155,4 @@
 
 </body>
 </html>
+<?php /**PATH D:\sip-sk-utara\resources\views/pdf/sk-document.blade.php ENDPATH**/ ?>
