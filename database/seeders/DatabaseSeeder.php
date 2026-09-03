@@ -6,8 +6,15 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
-        // Database Seeder Stub
+        $this->call([
+            RoleAndPermissionSeeder::class,
+            UserSeeder::class,
+            SkTemplateSeeder::class,
+        ]);
     }
 }
