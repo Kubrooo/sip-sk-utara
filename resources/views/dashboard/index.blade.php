@@ -15,7 +15,7 @@
                     Sistem Aktif &amp; Siap Digunakan
                 </div>
                 <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                    Selamat Datang, <span class="bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">{{ Auth::user()->name }}</span>
+                    Selamat Datang, <span class="bg-gradient-to-r transition-all duration-300 bg-clip-text text-transparent font-black" :class="darkMode ? 'from-white via-slate-100 to-indigo-200' : 'from-indigo-700 via-indigo-600 to-blue-600'">{{ Auth::user()->name }}</span>
                 </h1>
                 <p class="text-sm text-slate-300 leading-relaxed">
                     Sistem Informasi Pembuatan Surat Keputusan (SIP-SK) Produk Hukum Kecamatan Pekalongan Utara. Kelola alur pengajuan, verifikasi teknis, hingga pengesahan TTE Camat secara digital.

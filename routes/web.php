@@ -31,12 +31,7 @@ Route::middleware(['auth'])->group(function () {
     // 1. Dashboard Utama (Semua Peran)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // 2. Daftar Permohonan SK & Detail (Dapat diakses oleh Semua Peran)
-    Route::get('/submissions', [SkSubmissionController::class, 'index'])->name('submissions.index');
-    Route::get('/submissions/{submission}', [SkSubmissionController::class, 'show'])->name('submissions.show');
-    Route::get('/submissions/{submission}/pdf', [SkSubmissionController::class, 'downloadPdf'])->name('submissions.pdf');
-
-    // 3. Submissions Drafting & Inisiasi (Khusus Admin Kelurahan)
+    // 2. Submissions Drafting & Inisiasi (Khusus Admin Kelurahan)
     Route::middleware(['role:admin_kelurahan'])->group(function () {
         Route::get('/submissions/create', [SkSubmissionController::class, 'create'])->name('submissions.create');
         Route::post('/submissions', [SkSubmissionController::class, 'store'])->name('submissions.store');
@@ -44,6 +39,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/submissions/{submission}', [SkSubmissionController::class, 'update'])->name('submissions.update');
         Route::post('/submissions/{submission}/submit', [SkSubmissionController::class, 'submitToKecamatan'])->name('submissions.submit');
     });
+
+    // 3. Daftar Permohonan SK & Detail (Dapat diakses oleh Semua Peran)
+    Route::get('/submissions', [SkSubmissionController::class, 'index'])->name('submissions.index');
+    Route::get('/submissions/{submission}', [SkSubmissionController::class, 'show'])->name('submissions.show');
+    Route::get('/submissions/{submission}/pdf', [SkSubmissionController::class, 'downloadPdf'])->name('submissions.pdf');
 
     // 4. Dynamic Template Engine Management (Admin Kecamatan & Bagian Hukum)
     Route::middleware(['role:admin_kecamatan|bagian_hukum'])->group(function () {
