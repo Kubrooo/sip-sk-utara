@@ -89,6 +89,7 @@ class SkSubmissionController extends Controller
      */
     public function show(SkSubmission $submission)
     {
+        $this->authorize('view', $submission);
         $submission->load(['template', 'kelurahan', 'approver', 'logs.user']);
         return view('submissions.show', compact('submission'));
     }
@@ -98,6 +99,7 @@ class SkSubmissionController extends Controller
      */
     public function edit(SkSubmission $submission)
     {
+        $this->authorize('update', $submission);
         if (!in_array($submission->status, [SubmissionStatus::DRAFT_KELURAHAN, SubmissionStatus::REJECTED])) {
             return back()->with('error', 'Permohonan ini sedang dalam proses verifikasi dan tidak dapat diubah.');
         }
@@ -111,6 +113,7 @@ class SkSubmissionController extends Controller
      */
     public function update(Request $request, SkSubmission $submission)
     {
+        $this->authorize('update', $submission);
         if (!in_array($submission->status, [SubmissionStatus::DRAFT_KELURAHAN, SubmissionStatus::REJECTED])) {
             return back()->with('error', 'Permohonan ini sedang dalam proses verifikasi dan tidak dapat diubah.');
         }
@@ -131,6 +134,7 @@ class SkSubmissionController extends Controller
      */
     public function submitToKecamatan(SkSubmission $submission)
     {
+        $this->authorize('submit', $submission);
         if ($submission->status !== SubmissionStatus::DRAFT_KELURAHAN) {
             return back()->with('error', 'Hanya Draf Kelurahan yang dapat diajukan.');
         }
@@ -145,6 +149,7 @@ class SkSubmissionController extends Controller
      */
     public function downloadPdf(SkSubmission $submission)
     {
+        $this->authorize('view', $submission);
         $pdf = $this->pdfService->generatePdf($submission);
         $filename = 'SK_' . ($submission->sk_number ? str_replace('/', '_', $submission->sk_number) : $submission->tracking_code) . '.pdf';
 

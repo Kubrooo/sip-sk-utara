@@ -2,7 +2,7 @@
 
 return [
     'show_warnings' => false,
-    'public_path' => null,
+    'public_path' => is_dir(base_path('public')) ? base_path('public') : dirname(base_path()),
     'options' => [
         'font_dir' => storage_path('fonts'),
         'font_cache' => storage_path('fonts'),

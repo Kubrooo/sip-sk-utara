@@ -8,6 +8,7 @@ use App\Services\SkPdfService;
 use App\Services\SkWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class SkVerificationController extends Controller
 {
@@ -70,7 +71,12 @@ class SkVerificationController extends Controller
         }
 
         $request->validate([
-            'sk_number' => ['required', 'string', 'max:100'],
+            'sk_number' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('sk_submissions', 'sk_number')->ignore($submission->id),
+            ],
         ]);
 
         $this->workflowService->assignSkNumber($submission, Auth::user(), $request->sk_number);
@@ -118,11 +124,20 @@ class SkVerificationController extends Controller
      */
     public function returnRevision(Request $request, SkSubmission $submission)
     {
+        $user = Auth::user();
+        $expectedStatus = $user->hasRole('admin_kecamatan')
+            ? SubmissionStatus::REVIEW_KECAMATAN
+            : SubmissionStatus::REVIEW_HUKUM;
+
+        if ($submission->status !== $expectedStatus) {
+            return back()->with('error', 'Status permohonan tidak sesuai untuk dikembalikan ke revisi.');
+        }
+
         $request->validate([
             'notes' => ['required', 'string', 'max:1000'],
         ]);
 
-        $this->workflowService->returnForRevision($submission, Auth::user(), $request->notes);
+        $this->workflowService->returnForRevision($submission, $user, $request->notes);
 
         return back()->with('success', 'Draf SK berhasil dikembalikan ke Kelurahan dengan catatan revisi.');
     }

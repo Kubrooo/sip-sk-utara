@@ -100,7 +100,7 @@
 
     <!-- Judul & Nomor SK -->
     <div class="title-box">
-        <h4>KPUTUSAN CAMAT PEKALONGAN UTARA</h4>
+        <h4>KEPUTUSAN CAMAT PEKALONGAN UTARA</h4>
         <p>NOMOR: {{ $submission->sk_number ?? '...../...../PKL-UTARA/' . date('Y') }}</p>
         <p style="margin-top: 10px; font-weight: bold; text-transform: uppercase;">
             TENTANG<br>

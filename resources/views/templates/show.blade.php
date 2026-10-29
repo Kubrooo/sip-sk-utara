@@ -30,7 +30,7 @@
                 <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700/80 space-y-1">
                     <div class="flex items-center justify-between">
                         <span class="font-semibold text-white text-sm">{{ $field['label'] ?? '' }}</span>
-                        <span class="font-mono text-xs text-indigo-400">@{{ {{ $field['name'] ?? '' }} }}</span>
+                        <span class="font-mono text-xs text-indigo-400">&#123;&#123; {{ $field['name'] ?? '' }} &#125;&#125;</span>
                     </div>
                     <div class="text-xs text-slate-400 flex gap-2 pt-1">
                         <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 uppercase font-mono text-[10px]">Tipe: {{ $field['type'] ?? 'text' }}</span>

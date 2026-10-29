@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Verifikasi Teknis Kecamatan'); ?>
 
 <?php $__env->startSection('content'); ?>

@@ -7,7 +7,7 @@ use App\Models\SkLog;
 use App\Models\SkSubmission;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class SkWorkflowService
 {
@@ -34,6 +34,7 @@ class SkWorkflowService
      */
     public function submitToKecamatan(SkSubmission $submission, User $user): SkSubmission
     {
+        $this->ensureStatus($submission, SubmissionStatus::DRAFT_KELURAHAN);
         return DB::transaction(function () use ($submission, $user) {
             $submission->update([
                 'status' => SubmissionStatus::REVIEW_KECAMATAN,
@@ -55,6 +56,7 @@ class SkWorkflowService
      */
     public function forwardToHukum(SkSubmission $submission, User $user): SkSubmission
     {
+        $this->ensureStatus($submission, SubmissionStatus::REVIEW_KECAMATAN);
         return DB::transaction(function () use ($submission, $user) {
             $submission->update([
                 'status' => SubmissionStatus::REVIEW_HUKUM,
@@ -76,6 +78,7 @@ class SkWorkflowService
      */
     public function assignSkNumber(SkSubmission $submission, User $user, string $skNumber): SkSubmission
     {
+        $this->ensureStatus($submission, SubmissionStatus::REVIEW_HUKUM);
         return DB::transaction(function () use ($submission, $user, $skNumber) {
             $submission->update([
                 'sk_number' => $skNumber,
@@ -98,6 +101,7 @@ class SkWorkflowService
      */
     public function approveByCamat(SkSubmission $submission, User $user, string $tteHash, string $finalPdfPath): SkSubmission
     {
+        $this->ensureStatus($submission, SubmissionStatus::READY_FOR_APPROVAL);
         return DB::transaction(function () use ($submission, $user, $tteHash, $finalPdfPath) {
             $submission->update([
                 'status' => SubmissionStatus::APPROVED,
@@ -123,6 +127,13 @@ class SkWorkflowService
      */
     public function returnForRevision(SkSubmission $submission, User $user, string $notes): SkSubmission
     {
+        if (!in_array($submission->status, [
+            SubmissionStatus::REVIEW_KECAMATAN,
+            SubmissionStatus::REVIEW_HUKUM,
+        ], true)) {
+            throw new InvalidArgumentException('Submission tidak berada pada tahap yang dapat dikembalikan untuk revisi.');
+        }
+
         return DB::transaction(function () use ($submission, $user, $notes) {
             $submission->update([
                 'status' => SubmissionStatus::DRAFT_KELURAHAN,
@@ -145,6 +156,10 @@ class SkWorkflowService
      */
     public function reject(SkSubmission $submission, User $user, string $notes): SkSubmission
     {
+        if ($submission->status === SubmissionStatus::APPROVED) {
+            throw new InvalidArgumentException('Dokumen yang sudah disahkan tidak dapat ditolak.');
+        }
+
         return DB::transaction(function () use ($submission, $user, $notes) {
             $submission->update([
                 'status' => SubmissionStatus::REJECTED,
@@ -160,5 +175,14 @@ class SkWorkflowService
 
             return $submission;
         });
+    }
+
+    private function ensureStatus(SkSubmission $submission, SubmissionStatus $expected): void
+    {
+        if ($submission->status !== $expected) {
+            throw new InvalidArgumentException(
+                'Transisi status tidak valid. Status saat ini: ' . $submission->status->label()
+            );
+        }
     }
 }
