@@ -132,8 +132,32 @@
             box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1) !important;
         }
 
+        body.light-theme .bg-slate-600,
+        body.light-theme .bg-slate-700,
+        body.light-theme .bg-slate-800 {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        body.light-theme .hover\:bg-slate-600:hover,
+        body.light-theme .hover\:bg-slate-700:hover {
+            background-color: #e2e8f0 !important;
+            color: #1e293b !important;
+        }
+
         body.light-theme .text-white {
             color: #0f172a !important;
+        }
+
+        body.light-theme aside a.bg-indigo-600,
+        body.light-theme aside a.bg-indigo-600 .text-white,
+        body.light-theme .bg-indigo-600.text-white,
+        body.light-theme .bg-blue-600.text-white,
+        body.light-theme .bg-emerald-600.text-white,
+        body.light-theme .bg-rose-600.text-white,
+        body.light-theme .bg-gradient-to-r.text-white,
+        body.light-theme aside .bg-gradient-to-br .text-white {
+            color: #ffffff !important;
         }
 
         body.light-theme .text-slate-100 {
