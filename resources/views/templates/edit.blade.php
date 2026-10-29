@@ -3,8 +3,10 @@
 @section('title', 'Edit Template SK - ' . $template->code)
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6" x-data="{
-    fields: {{ json_encode($template->dynamic_fields ?? []) }},
+<div class="max-w-6xl mx-auto space-y-6" x-data="{
+    fields: @js(old('dynamic_fields', $template->dynamic_fields ?? [])),
+    editorHtml: @js(old('html_template', $template->html_template)),
+    previewHtml: '',
     addField() {
         this.fields.push({ name: '', label: '', type: 'text', options: '', required: false });
     },
@@ -12,8 +14,27 @@
         if (this.fields.length > 1) {
             this.fields.splice(index, 1);
         }
+    },
+    updateEditor() {
+        this.editorHtml = this.$refs.editor.innerHTML;
+        this.previewHtml = this.editorHtml.replace(/\x7b\x7b\s*([a-z][a-z0-9_]*)\s*\x7d\x7d/g, '<span style=&quot;background:#e0e7ff;color:#3730a3;padding:2px 4px;border-radius:3px;&quot;>[$1]</span>');
+    },
+    insertText(text) {
+        this.$refs.editor.focus();
+        document.execCommand('insertText', false, text);
+        this.updateEditor();
+    },
+    insertSection(title) {
+        this.$refs.editor.focus();
+        document.execCommand('insertHTML', false, '<p><strong>' + title + ':</strong> </p>');
+        this.updateEditor();
+    },
+    format(command) {
+        this.$refs.editor.focus();
+        document.execCommand(command, false, null);
+        this.updateEditor();
     }
-}">
+}" x-init="$refs.editor.innerHTML = editorHtml; updateEditor()">
     <!-- Header Page -->
     <div class="flex items-center justify-between bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl">
         <div>
@@ -107,13 +128,19 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Opsi (Pisah Koma)</label>
+                                <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Opsi Select</label>
                                 <input type="text" :name="'dynamic_fields[' + index + '][options]'"
                                     :value="Array.isArray(field.options) ? field.options.join(', ') : field.options"
                                     @input="field.options = $event.target.value"
+                                    x-show="field.type === 'select'" :required="field.type === 'select'"
                                     class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs">
                             </div>
                         </div>
+                        <label class="inline-flex items-center gap-2 text-xs text-slate-300">
+                            <input type="checkbox" :name="'dynamic_fields[' + index + '][required]'" value="1" x-model="field.required"
+                                class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                            Wajib diisi oleh Admin Kelurahan
+                        </label>
                     </div>
                 </template>
             </div>
@@ -121,9 +148,39 @@
 
         <!-- HTML Template Body Card -->
         <div class="bg-slate-800/80 border border-slate-700/60 backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
-            <h2 class="text-lg font-semibold text-white">Struktur Dokumen (HTML Template Body)</h2>
-            <textarea name="html_template" id="html_template" rows="12" required
-                class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 leading-relaxed">{{ old('html_template', $template->html_template) }}</textarea>
+            <div>
+                <h2 class="text-lg font-semibold text-white">Isi Dokumen</h2>
+                <p class="text-xs text-slate-400 mt-1">Edit seperti dokumen biasa. Gunakan tombol variabel, bukan mengetik placeholder secara manual.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 rounded-xl border border-slate-700 bg-slate-900/70 p-3">
+                <button type="button" @click="format('bold')" class="rounded-lg bg-slate-700 px-3 py-1.5 text-xs font-bold text-white">B</button>
+                <button type="button" @click="format('italic')" class="rounded-lg bg-slate-700 px-3 py-1.5 text-xs italic text-white">I</button>
+                <button type="button" @click="format('justifyCenter')" class="rounded-lg bg-slate-700 px-3 py-1.5 text-xs text-white">Tengah</button>
+                <span class="mx-1 border-l border-slate-700"></span>
+                <template x-for="field in fields" :key="field.name">
+                    <button type="button" @click="insertText('&#123;&#123;' + field.name + '&#125;&#125;')" class="rounded-lg bg-indigo-600/30 px-3 py-1.5 text-xs font-semibold text-indigo-200 border border-indigo-500/30" x-text="field.label || field.name"></button>
+                </template>
+                <button type="button" @click="insertText('&#123;&#123;sk_number&#125;&#125;')" class="rounded-lg bg-emerald-600/30 px-3 py-1.5 text-xs font-semibold text-emerald-200 border border-emerald-500/30">Nomor SK</button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <span class="self-center text-[11px] font-semibold text-slate-400">Tambah bagian:</span>
+                <button type="button" @click="insertSection('Menimbang')" class="rounded-lg border border-slate-600 px-2.5 py-1.5 text-[11px] text-slate-300">Menimbang</button>
+                <button type="button" @click="insertSection('Mengingat')" class="rounded-lg border border-slate-600 px-2.5 py-1.5 text-[11px] text-slate-300">Mengingat</button>
+                <button type="button" @click="insertSection('MEMUTUSKAN')" class="rounded-lg border border-slate-600 px-2.5 py-1.5 text-[11px] text-slate-300">MEMUTUSKAN</button>
+                <button type="button" @click="insertSection('MENETAPKAN')" class="rounded-lg border border-slate-600 px-2.5 py-1.5 text-[11px] text-slate-300">MENETAPKAN</button>
+            </div>
+            <div class="grid gap-4 lg:grid-cols-2">
+                <div>
+                    <div x-ref="editor" contenteditable="true" @input="updateEditor()" class="min-h-[280px] rounded-xl border border-slate-700 bg-white p-5 text-sm leading-7 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+                    <textarea name="html_template" class="hidden" x-model="editorHtml" required></textarea>
+                    <p class="mt-2 text-[11px] text-slate-500">Contoh alur: Menimbang → Mengingat → MEMUTUSKAN → Menetapkan.</p>
+                </div>
+                <div class="rounded-xl border border-slate-700 bg-white p-4">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Pratinjau</p>
+                    <iframe title="Pratinjau template" class="h-[280px] w-full rounded border border-slate-200 bg-white" sandbox
+                        :srcdoc="previewHtml || '<p style=&quot;color:#64748b;font-family:sans-serif&quot;>Mulai menulis isi dokumen.</p>'"></iframe>
+                </div>
+            </div>
         </div>
 
         <div class="flex justify-end gap-3">

@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Kelola Template SK'); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -82,16 +80,22 @@
                                 <a href="<?php echo e(route('templates.show', $template)); ?>" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium transition-colors">
                                     Detail
                                 </a>
-                                <a href="<?php echo e(route('templates.edit', $template)); ?>" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-medium transition-colors border border-indigo-500/30">
-                                    Edit
-                                </a>
-                                <form action="<?php echo e(route('templates.destroy', $template)); ?>" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus template ini?')">
-                                    <?php echo csrf_field(); ?>
-                                    <?php echo method_field('DELETE'); ?>
-                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 text-xs font-medium transition-colors border border-rose-500/30">
-                                        Hapus
-                                    </button>
-                                </form>
+                                <?php if($template->submissions_count === 0): ?>
+                                    <a href="<?php echo e(route('templates.edit', $template)); ?>" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-xs font-medium transition-colors border border-indigo-500/30">
+                                        Edit
+                                    </a>
+                                    <form action="<?php echo e(route('templates.destroy', $template)); ?>" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus template ini?')">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
+                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 text-xs font-medium transition-colors border border-rose-500/30">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-700 text-slate-400 text-xs font-medium border border-slate-600" title="Template dikunci karena sudah digunakan">
+                                        Terkunci
+                                    </span>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>

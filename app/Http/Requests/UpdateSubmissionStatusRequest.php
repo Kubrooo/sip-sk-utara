@@ -6,5 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSubmissionStatusRequest extends FormRequest
 {
-    // Form Request Stub: Validasi perubahan status SK, penomoran resmi, & catatan revisi
+    public function authorize(): bool
+    {
+        return $this->user()?->hasAnyRole(['admin_kecamatan', 'bagian_hukum']) ?? false;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'notes' => ['required', 'string', 'max:1000'],
+        ];
+    }
 }
